@@ -4,55 +4,150 @@
 [![Framework](https://img.shields.io/badge/framework-Ultralytics%20YOLOv8-green.svg)](#model-family)
 [![Task](https://img.shields.io/badge/task-traffic%20sign%20detection-orange.svg)](#project-overview)
 
-Traffic sign detection based on YOLOv8 with custom architectural extensions including CBAM, LCFE, IMCMD, and YOLO-TS style feature fusion.
+A computer vision project for traffic sign detection using YOLOv8 and custom lightweight architecture variants.
 
-This project investigates whether lightweight feature-fusion and attention designs can improve small-object traffic sign detection while maintaining strong robustness across different lighting conditions.
+This project compares a standard YOLOv8 baseline with several attention and feature-fusion extensions, including CBAM, LCFE, IMCMD, and YOLO-TS-style fusion. The goal is to improve small-object traffic sign detection while evaluating robustness across day and night driving conditions.
 
-## Project Overview
+---
 
-### Objective
+## Overview
 
-The goal is to detect traffic signs in road-scene imagery and evaluate whether custom lightweight feature-fusion designs can outperform a standard YOLOv8 baseline, especially under day and night conditions.
+Traffic sign detection is an important perception task for autonomous driving and driver-assistance systems. Road signs are often small, visually similar, partially occluded, or affected by lighting changes, which makes detection challenging.
 
-### Main research questions
+This project investigates:
 
-- Can a lightweight custom architecture improve traffic sign detection accuracy?
-- Which modules contribute most to the final performance gain?
-- How robust are the models under day and night conditions?
-- What design offers the best tradeoff between accuracy and parameter efficiency?
+- Whether lightweight feature-fusion modules can improve YOLOv8 traffic sign detection
+- Which custom modules contribute most to detection performance
+- How model performance changes between day and night conditions
+- Whether higher accuracy can be achieved with fewer parameters
 
-## Model Family
+---
 
-This repository includes several model variants built around YOLOv8:
+## Project Workflow
+
+```text
+Traffic sign dataset
+        ↓
+Dataset configuration
+        ↓
+YOLOv8 baseline training
+        ↓
+Custom model variant training
+        ↓
+Evaluation and comparison
+        ↓
+Day/night robustness analysis
+        ↓
+Result visualization
+```
+
+---
+
+## Model Variants
 
 | Variant | Description |
 |---|---|
-| `baseline` | Standard YOLOv8 training |
+| `baseline` | Standard YOLOv8 training baseline |
 | `cbam` | YOLOv8 with CBAM attention |
-| `lcfe` | YOLOv8 with lightweight context enhancement |
-| `lcfe_v2` | Stability-improved LCFE design |
-| `imcmd` | IMCMD with custom feature fusion |
-| `imcmd_ts` | IMCMD combined with YOLO-TS style AGRFM fusion |
-| `ts` | YOLO-TS style ablation variant |
+| `lcfe` | YOLOv8 with lightweight context feature enhancement |
+| `lcfe_v2` | Stability-improved LCFE variant |
+| `imcmd` | Custom IMCMD feature-fusion design |
+| `imcmd_ts` | IMCMD with YOLO-TS-style AGRFM fusion |
+| `ts` | YOLO-TS-style ablation variant |
 
-## Features
+---
+
+## Key Features
 
 - YOLOv8-based traffic sign detection pipeline
 - Multiple custom architecture variants for comparison
-- Day and night robustness analysis
-- Ablation-style component comparison
-- Unified CLI wrappers for training, evaluation, and prediction
-- Structured benchmark summaries and result visualizations
+- Lightweight attention and feature-fusion experiments
+- Day vs. night robustness analysis
+- Ablation-style model comparison
+- CLI wrappers for training, evaluation, and prediction
+- Benchmark summaries and visualization charts
+
+---
+
+## Dataset
+
+The project is designed around the LISA traffic sign dataset setup used in the experiments.
+
+Expected class set:
+
+- `go`
+- `goForward`
+- `goLeft`
+- `stop`
+- `stopLeft`
+- `warning`
+- `warningLeft`
+
+The full dataset is not included in this repository. Dataset paths should be updated in the YAML files before training or evaluation.
+
+Dataset configuration files:
+
+```text
+configs/datasets/
+lisa_day.yaml
+lisa_night.yaml
+```
+
+More details are available in:
+
+```text
+docs/dataset_card.md
+```
+
+---
+
+## Methodology
+
+### 1. Baseline Training
+
+The project first trains a standard YOLOv8 baseline to establish a reference point for traffic sign detection performance.
+
+The baseline is used to evaluate whether custom modules improve accuracy, robustness, or parameter efficiency.
+
+---
+
+### 2. Custom Architecture Variants
+
+Several model variants are tested around the YOLOv8 framework.
+
+The custom modules focus on:
+
+- Strengthening feature fusion
+- Improving small-object representation
+- Adding lightweight attention
+- Comparing accuracy vs. parameter efficiency
+- Testing robustness under lighting changes
+
+---
+
+### 3. Evaluation
+
+Models are evaluated using object detection metrics, with emphasis on:
+
+- mAP@0.5
+- Parameter count
+- Overall model comparison
+- Day vs. night performance
+- Ablation-style component contribution
+
+Results are summarized in:
+
+```text
+docs/results.md
+reports/metrics_summary.csv
+reports/day_night_summary.csv
+```
+
+---
 
 ## Results
 
-The repository includes benchmark summaries and visual comparisons across the main model variants.
-
-### Headline performance
-
-On the LISA traffic sign benchmark used in this project, the strongest variant is `IMCMD`, which reaches **42.74% mAP@0.5**, outperforming the YOLOv8 baseline at **39.14% mAP@0.5**.
-
-### Summary table
+The strongest reported variant in this project is `IMCMD`.
 
 | Model | mAP@0.5 | Params | Notes |
 |---|---:|---:|---|
@@ -63,121 +158,125 @@ On the LISA traffic sign benchmark used in this project, the strongest variant i
 | CCA_Light | 29.91 | - | Lightweight context baseline |
 | CBAM | 11.73 | - | Attention-only comparison |
 
-Detailed summaries are available in:
+Key observations:
 
-- [docs/results.md](docs/results.md)
-- [reports/metrics_summary.csv](reports/metrics_summary.csv)
-- [reports/day_night_summary.csv](reports/day_night_summary.csv)
+- `IMCMD` achieved the best reported mAP@0.5.
+- `IMCMD-TS` remained competitive and showed strong robustness behavior.
+- The custom variants outperformed the standard YOLOv8 baseline in this setup.
+- IMCMD achieved better accuracy with substantially fewer parameters than the baseline.
 
-### Figures
+---
 
-#### Overall model comparison
+## Visual Results
 
-![Performance Comparison](charts/chart1_performance_comparison.png)
+The repository includes generated charts for:
 
-#### Day vs night robustness
+- Overall model comparison
+- Day vs. night robustness
+- Ablation study
+- Training convergence
 
-![Day Night Comparison](charts/chart2_day_night_comparison.png)
+Chart files are stored in:
 
-#### Ablation study
+```text
+charts/
+```
 
-![Ablation Study](charts/chart3_ablation_study.png)
+Detailed result notes are available in:
 
-#### Training convergence
+```text
+docs/results.md
+```
 
-![Training Convergence](charts/chart4_training_convergence.png)
-
-## Benchmark Highlights
-
-- `IMCMD` delivers the best reported overall accuracy in this project.
-- `IMCMD-TS` remains competitive and shows the smallest relative day-to-night performance drop.
-- The custom variants outperform the standard YOLOv8 baseline in the reported setup.
-- The parameter comparison suggests that the IMCMD design is substantially more efficient than the baseline while still improving accuracy.
+---
 
 ## Repository Structure
 
 ```text
-yolov8-traffic-sign/
-|-- .github/                    # CI workflow
-|-- assets/
-|   `-- sample_predictions/     # Placeholder for qualitative predictions
-|-- charts/                     # Project result figures used in the README
-|-- configs/
-|   |-- datasets/               # Dataset yaml files
-|   `-- experiments/            # Experiment presets
-|-- data/
-|   |-- external/               # Raw datasets (not tracked)
-|   |-- interim/                # Intermediate assets
-|   `-- processed/              # Processed dataset assets
-|-- docs/
-|   |-- dataset_card.md
-|   |-- github_release_checklist.md
-|   |-- project_overview.md
-|   |-- results.md
-|   `-- roadmap.md
-|-- outputs/                    # Prediction outputs
-|-- reports/
-|   |-- ablation_template.md
-|   |-- day_night_summary.csv
-|   |-- metrics_summary.csv
-|   `-- metrics_summary_template.csv
-|-- scripts/
-|   |-- train.py
-|   |-- evaluate.py
-|   |-- predict.py
-|   `-- prepare_folders.py
-|-- src/
-|   `-- yolo_traffic_sign/
-|       |-- models/
-|       |-- cli.py
-|       |-- inference.py
-|       |-- legacy.py
-|       `-- paths.py
-|-- tests/
-|-- pyproject.toml
-|-- requirements.txt
-`-- README.md
+YOLOv8-Traffic-Sign-Detection/
+├── .github/                    # CI workflow
+├── assets/
+│   └── sample_predictions/     # Sample prediction assets
+├── charts/                     # Result figures used in README
+├── configs/
+│   ├── datasets/               # Dataset YAML files
+│   └── experiments/            # Experiment presets
+├── data/
+│   ├── external/               # Raw datasets, not tracked
+│   ├── interim/                # Intermediate assets
+│   └── processed/              # Processed dataset assets
+├── docs/
+│   ├── dataset_card.md
+│   ├── project_overview.md
+│   ├── results.md
+│   └── roadmap.md
+├── outputs/                    # Prediction outputs
+├── reports/
+│   ├── day_night_summary.csv
+│   ├── metrics_summary.csv
+│   └── metrics_summary_template.csv
+├── scripts/
+│   ├── train.py
+│   ├── evaluate.py
+│   ├── predict.py
+│   └── prepare_folders.py
+├── src/
+│   └── yolo_traffic_sign/
+│       ├── models/
+│       ├── cli.py
+│       ├── inference.py
+│       ├── legacy.py
+│       └── paths.py
+├── tests/
+├── pyproject.toml
+├── requirements.txt
+└── README.md
 ```
 
-## Environment
-
-Recommended setup:
-
-```bash
-py -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-pip install -e .
-```
-
-If you are using GPU training, install the correct CUDA-enabled PyTorch build first, then install the remaining dependencies.
+---
 
 ## Installation
 
+### 1. Clone the repository
+
 ```bash
-git clone <your-repo-url>
-cd yolov8-traffic-sign
+git clone https://github.com/zehuanyu/YOLOv8-Traffic-Sign-Detection.git
+cd YOLOv8-Traffic-Sign-Detection
+```
+
+### 2. Create environment
+
+```bash
 py -m venv .venv
 .venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
 pip install -e .
 ```
 
+If using GPU training, install the correct CUDA-enabled PyTorch build before installing the remaining dependencies.
+
+---
+
 ## Quick Start
 
-### Prepare folders
+### Prepare project folders
 
 ```bash
 py scripts/prepare_folders.py
 ```
 
-### Train a baseline model
+### Train YOLOv8 baseline
 
 ```bash
 py scripts/train.py train --variant baseline --data configs/datasets/lisa_day.yaml --epochs 100 --batch 16 --name baseline_yolov8s_100epochs
 ```
 
-### Train IMCMD
+### Train IMCMD variant
 
 ```bash
 py scripts/train.py train --variant imcmd --model-type small --data configs/datasets/lisa_night.yaml --epochs 100 --batch 16 --name imcmd_small_100epochs
@@ -195,51 +294,40 @@ py scripts/evaluate.py --weights runs/traffic_sign/imcmd_small_100epochs/weights
 py scripts/predict.py predict --weights runs/traffic_sign/imcmd_small_100epochs/weights/best.pt --source assets/sample_predictions --variant imcmd --name imcmd_demo
 ```
 
-Prediction outputs are saved under `outputs/predict/`.
+Prediction outputs are saved under:
 
-## Dataset
+```text
+outputs/predict/
+```
 
-This repository does not ship the full dataset. Update the YAML files in `configs/datasets/` or the root-level `lisa_day.yaml` and `lisa_night.yaml` to match your local dataset path before training or evaluation.
-
-Expected class set:
-
-- go
-- goForward
-- goLeft
-- stop
-- stopLeft
-- warning
-- warningLeft
-
-More details are in [docs/dataset_card.md](docs/dataset_card.md).
+---
 
 ## Engineering Notes
 
 - Root-level model scripts are preserved for compatibility with the original experiment code.
-- Reusable wrapper logic lives in `src/yolo_traffic_sign/`.
-- Result summaries in `reports/` are aligned with the figures used in the README.
+- Reusable wrapper logic is organized under `src/yolo_traffic_sign/`.
+- Result summaries in `reports/` are aligned with the charts used in the README.
+- Dataset YAML paths must be updated locally before training.
 
-## Roadmap
+---
 
-Short-term improvements:
+## Future Improvements
 
-- move legacy modules fully into `src/yolo_traffic_sign/models/`
-- add automated metrics export after training
-- add sample qualitative prediction gallery
-- add a stricter evaluation report pipeline
+- Move remaining legacy modules into `src/yolo_traffic_sign/models/`
+- Add automated metrics export after training
+- Add qualitative prediction examples to the README
+- Add stricter evaluation report generation
+- Release pretrained model artifacts
+- Add more detailed error analysis for failure cases
 
-Longer-term improvements:
+---
 
-- add pretrained release artifacts
-- add notebook-free experiment reproduction docs
-- add richer inference demos and error analysis
+## Tech Stack
 
-## References
+Python, PyTorch, Ultralytics YOLOv8, OpenCV, Object Detection, Computer Vision, Traffic Sign Detection, Model Evaluation, Data Visualization
 
-- Detectron2 README: https://github.com/facebookresearch/detectron2
-- MMDetection README: https://github.com/open-mmlab/mmdetection
-- YOLOX README: https://github.com/Megvii-BaseDetection/YOLOX
+---
 
-## License
+## Author
 
-MIT License. See [LICENSE](LICENSE).
+Zehuan Yu
